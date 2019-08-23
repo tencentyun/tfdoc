@@ -6,18 +6,33 @@ import (
 	"net/http"
 	"strings"
 
-	//alicloud "github.com/terraform-providers/terraform-provider-alicloud/alicloud"
-	//aws "github.com/terraform-providers/terraform-provider-aws/aws"
 	"github.com/hashicorp/terraform/helper/schema"
+	// alicloud "github.com/terraform-providers/terraform-provider-alicloud/alicloud"
+	// aws "github.com/terraform-providers/terraform-provider-aws/aws"
+	// azurerm "github.com/terraform-providers/terraform-provider-azurerm/azurerm"
+	// google "github.com/terraform-providers/terraform-provider-google/google"
 	tencentcloud "github.com/terraform-providers/terraform-provider-tencentcloud/tencentcloud"
 )
 
 const LISTENPORT = "127.0.0.1:8080"
 
 var PROVIDERS = []string{
-	//"alicloud",
-	//"aws",
+	// "alicloud",
+	// "aws",
+	// "azurerm",
+	// "google",
 	"tencentcloud",
+}
+
+var TypeMap = map[schema.ValueType]string{
+	schema.TypeInvalid: "invalid",
+	schema.TypeBool:    "bool",
+	schema.TypeInt:     "int",
+	schema.TypeFloat:   "float",
+	schema.TypeString:  "string",
+	schema.TypeList:    "list",
+	schema.TypeMap:     "map",
+	schema.TypeSet:     "set",
 }
 
 type Provider interface {
@@ -26,10 +41,14 @@ type Provider interface {
 
 func NewProvider(name string) (*schema.Provider, error) {
 	switch name {
-	//case "alicloud":
-	//	return alicloud.Provider(), nil
-	//case "aws":
-	//	return aws.Provider(), nil
+	// case "alicloud":
+	// 	return alicloud.Provider().(*schema.Provider), nil
+	// case "aws":
+	// 	return aws.Provider().(*schema.Provider), nil
+	// case "azurerm":
+	//	return azurerm.Provider().(*schema.Provider), nil
+	// case "google":
+	//	return google.Provider().(*schema.Provider), nil
 	case "tencentcloud":
 		return tencentcloud.Provider(), nil
 	default:
@@ -172,11 +191,13 @@ func getSchema(t string, k string, v *schema.Schema) map[string]interface{} {
 		if t == "Arguments" {
 			r = map[string]interface{}{
 				"required":    v.Required,
+				"type":        TypeMap[v.Type],
 				"description": v.Description,
 				"list":        rr,
 			}
 		} else {
 			r = map[string]interface{}{
+				"type":        TypeMap[v.Type],
 				"description": v.Description,
 				"list":        rr,
 			}
@@ -185,10 +206,12 @@ func getSchema(t string, k string, v *schema.Schema) map[string]interface{} {
 		if t == "Arguments" {
 			r = map[string]interface{}{
 				"required":    v.Required,
+				"type":        TypeMap[v.Type],
 				"description": v.Description,
 			}
 		} else {
 			r = map[string]interface{}{
+				"type":        TypeMap[v.Type],
 				"description": v.Description,
 			}
 		}
