@@ -1,4 +1,4 @@
-module tfdoc
+module github.com:tencentyun/tfdoc
 
 go 1.12
 
